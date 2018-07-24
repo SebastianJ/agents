@@ -6,7 +6,15 @@ module Agents
   class << self
     def random_user_agent(*args)
       args    =   (args.nil? || args.empty?) ? [:desktop] : args
-      ::Agents::Constants::USER_AGENTS.dig(*args&.collect(&:to_sym))&.sample
+      
+      case args.first
+        when :phone, :mobile
+          (::Agents::Constants::USER_AGENTS[:phones][:iphone] | ::Agents::Constants::USER_AGENTS[:phones][:android])&.sample
+        when :tablet
+          (::Agents::Constants::USER_AGENTS[:tablets][:ipad] | ::Agents::Constants::USER_AGENTS[:tablets][:android])&.sample
+        else
+          ::Agents::Constants::USER_AGENTS.dig(*args&.collect(&:to_sym))&.sample
+      end
     end
     
     def runs_ios?(user_agent)
